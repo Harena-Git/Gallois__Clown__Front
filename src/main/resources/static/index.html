@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clown Hotel - Front Office</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar">
+            <div class="container">
+                <h1 class="logo">Clown Hotel</h1>
+                <ul class="nav-menu">
+                    <li><a href="#hotels" onclick="showHotels()">Hôtels</a></li>
+                    <li><a href="#reservations" onclick="showReservations()">Réservations</a></li>
+                    <li><a href="#search" onclick="showSearch()">Recherche</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="container">
+            <!-- Section Accueil -->
+            <section id="home" class="hero">
+                <h2>Bienvenue chez Clown Hotel</h2>
+                <p>Trouvez et réservez votre séjour idéal</p>
+                <button class="btn btn-primary" onclick="showSearch()">Commencer la recherche</button>
+            </section>
+
+            <!-- Section Hôtels -->
+            <section id="hotels-section" class="section hidden">
+                <h2>Nos Hôtels</h2>
+                <div id="hotels-list" class="hotels-grid">
+                    <!-- Les hôtels seront chargés ici -->
+                </div>
+            </section>
+
+            <!-- Section Recherche -->
+            <section id="search-section" class="section hidden">
+                <h2>Rechercher une Réservation</h2>
+                <div class="search-form">
+                    <div class="form-group">
+                        <label for="search-date">Date d'arrivée:</label>
+                        <input type="date" id="search-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="search-hotel">Hôtel:</label>
+                        <select id="search-hotel">
+                            <option value="">-- Tous les hôtels --</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="searchReservations()">Rechercher</button>
+                </div>
+                <div id="search-results" class="results">
+                    <!-- Les résultats seront affichés ici -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

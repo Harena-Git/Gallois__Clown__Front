@@ -1,0 +1,89 @@
+name: Deploy FrontOffice
+
+on:
+  push:
+    branches: [ main, staging, release ]
+    paths:
+      - 'Gallois__Clown__Front/**'
+      - '.github/workflows/deploy-frontoffice.yml'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build and Test
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build with Maven
+      run: mvn clean package --file Gallois__Clown__Front/pom.xml
+      continue-on-error: false
+
+    - name: Run Tests
+      run: mvn test --file Gallois__Clown__Front/pom.xml
+      continue-on-error: true
+
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging'
+    name: Deploy to Staging
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build WAR
+      run: mvn clean package -DskipTests --file Gallois__Clown__Front/pom.xml
+
+    - name: Deploy to Render.com (Staging)
+      env:
+        RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_STAGING_DEPLOY_HOOK }}
+      run: |
+        if [ -n "$RENDER_DEPLOY_HOOK" ]; then
+          curl -X POST "$RENDER_DEPLOY_HOOK"
+        fi
+
+  deploy-prod:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/release'
+    name: Deploy to Production
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build WAR
+      run: mvn clean package -DskipTests --file Gallois__Clown__Front/pom.xml
+
+    - name: Deploy to Render.com (Production)
+      env:
+        RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_PROD_DEPLOY_HOOK }}
+      run: |
+        if [ -n "$RENDER_DEPLOY_HOOK" ]; then
+          curl -X POST "$RENDER_DEPLOY_HOOK"
+        fi
